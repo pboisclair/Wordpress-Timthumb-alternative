@@ -34,7 +34,7 @@
  *  @return array   An array containing the resized image URL, width, height and file type.
  */
 if ( isset( $wp_version ) && version_compare( $wp_version, '3.5' ) >= 0 ) {
-	function matthewruddy_image_resize( $url, $width = NULL, $height = NULL, $crop = true, $retina = false ) {
+	function matthewruddy_image_resize( $url, $width = NULL, $height = NULL, $crop = true, $retina = false, $align = false ) {
 
 		global $wpdb;
 
@@ -120,6 +120,21 @@ if ( isset( $wp_version ) && version_compare( $wp_version, '3.5' ) >= 0 ) {
 
 			}
 
+			if ( $align ) {
+				if (strpos ($align, 't') !== false) {
+					$src_y = 0;
+				}
+				if (strpos ($align, 'b') !== false) {
+					$src_y = $height - $src_h;
+				}
+				if (strpos ($align, 'l') !== false) {
+					$src_x = 0;
+				}
+				if (strpos ($align, 'r') !== false) {
+					$src_x = $orig_width - $src_w;
+				}
+			}
+			
 			// Time to crop the image!
 			$editor->crop( $src_x, $src_y, $src_w, $src_h, $dest_width, $dest_height );
 
@@ -253,6 +268,20 @@ else {
 					$src_y = round( ( $orig_height - ( $orig_height / $cmp_y * $cmp_x ) ) / 2 );
 				}
 
+				if ( $align ) {
+					if (strpos ($align, 't') !== false) {
+						$src_y = 0;
+					}
+					if (strpos ($align, 'b') !== false) {
+						$src_y = $height - $src_h;
+					}
+					if (strpos ($align, 'l') !== false) {
+						$src_x = 0;
+					}
+					if (strpos ($align, 'r') !== false) {
+						$src_x = $orig_width - $src_w;
+					}
+				}
 				// Create the resampled image
 				imagecopyresampled( $new_image, $image, 0, 0, $src_x, $src_y, $dest_width, $dest_height, $src_w, $src_h );
 
